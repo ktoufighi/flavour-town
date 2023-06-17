@@ -1,12 +1,15 @@
 // entire MODEL
 import { async } from 'regenerator-runtime';
 import { API_URL } from './config.js';
+import { RES_PER_PAGE } from './config.js';
 import { getJSON } from './helpers.js';
 export const state = {
   recipe: {},
   search: {
     query: '',
     results: [],
+    page: 1, // by default is page 1
+    resultsPerPage: RES_PER_PAGE,
   },
 };
 export const loadRecipe = async function (id) {
@@ -59,5 +62,13 @@ export const loadSearchResults = async function (query) {
     throw err;
   }
 };
-// test with hard coded data
-// loadSearchResults('pasta');
+// Display only 10 items on page
+// Not a async function as we already have fetched the data
+export const getSearchResultsPage = function (page = state.search.page) {
+  // on which page we currently are in our search results
+  state.search.page = page;
+  const start = (page - 1) * state.search.resultsPerPage; // 0
+  const end = page * state.search.resultsPerPage; // 9 (0 index based)
+
+  return state.search.results.slice(start, end);
+};
